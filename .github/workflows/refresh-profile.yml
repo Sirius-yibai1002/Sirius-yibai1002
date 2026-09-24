@@ -1,5 +1,9 @@
 name: Refresh public activity
 on:
+  push:
+    paths:
+      - 'scripts/build-assets.mjs'
+      - '.github/workflows/refresh-profile.yml'
   schedule:
     - cron: '23 2 * * *'
   workflow_dispatch:
