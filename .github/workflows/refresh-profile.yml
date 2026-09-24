@@ -1,0 +1,26 @@
+name: Refresh public activity
+on:
+  schedule:
+    - cron: '23 2 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: profile-assets
+  cancel-in-progress: false
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Generate assets from public data
+        run: node scripts/build-assets.mjs
+      - name: Save updated activity
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'chore: refresh public profile activity'
+          git push
